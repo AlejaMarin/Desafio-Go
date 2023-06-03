@@ -15,6 +15,12 @@ func main() {
 
 	// total, err := tickets.GetTotalTickets("Brazil")
 
+	cantidad, f := tickets.GetCountByPeriod("madrugada")
+	if f != nil {
+		log.Fatal(f)
+	}
+	fmt.Println("Cantidad Personas:", cantidad)
+
 	total, err := tickets.PercentageDestination("Brazil", 1000)
 	if err != nil {
 		log.Fatal(err)
