@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-
 	"github.com/AlejaMarin/Desafio-Go/internal/tickets"
+	"log"
 )
 
 func main() {
@@ -28,6 +28,13 @@ func main() {
 	ch1 := make(chan int)
 	go tickets.GetTotalTickets("china", ch1)
 	fmt.Println("En el destino ingresado viajan", <-ch1)
+
+	// Requerimiento 2:
+	cantidad, timeTravel, f := tickets.GetCountByPeriod("tard")
+	if f != nil {
+		log.Fatal(f)
+	}
+	fmt.Println("La cantidad de personas que viajan por la", timeTravel, "es de:", cantidad)
 
 	// Requerimiento 3
 	ch3 := make(chan float64)
