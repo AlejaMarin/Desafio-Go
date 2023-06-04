@@ -13,18 +13,21 @@ func main() {
 	/* Ejecutar al menos una vez cada requerimiento en la función main.
 	Las ejecuciones deben realizarse de manera concurrente (utilizando diferentes goroutines). */
 
+	// Requerimiento 1:
 	// total, err := tickets.GetTotalTickets("Brazil")
 
-	cantidad, f := tickets.GetCountByPeriod("madrugada")
+	// Requerimiento 2:
+	cantidad, timeTravel, f := tickets.GetCountByPeriod("tard")
 	if f != nil {
 		log.Fatal(f)
 	}
-	fmt.Println("Cantidad Personas:", cantidad)
+	fmt.Println("La cantidad de personas que viajan por la", timeTravel, "es de:", cantidad)
 
-	total, err := tickets.PercentageDestination("Brazil", 1000)
+	// Requerimiento 3:
+	/*total, err := tickets.PercentageDestination("Brazil", 1000)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Porcentaje Personas:", total, "%")
+	fmt.Println("Porcentaje Personas:", total, "%")*/
 
 }
