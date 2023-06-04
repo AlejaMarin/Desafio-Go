@@ -1,6 +1,7 @@
 package tickets
 
 import (
+	"errors"
 	"log"
 	"os"
 	"strconv"
@@ -16,16 +17,15 @@ type Ticket struct {
 	Precio      int
 }
 
-// ejemplo 1
-// func GetTotalTickets(destination string) (int, error) {}
+func readData() []Ticket {
+	//Open CSV file
+	file, err := os.Open("tickets.csv")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
 
-// ejemplo 2
-// func GetMornings(time string) (int, error) {}
-
-// Requerimiento 3
-// Calcular el porcentaje de personas que viajan a un país determinado en un día.
-func PercentageDestination(destination string, total int) (float64, error) {
-
+	//Read CSV file
 	rawData, err := os.ReadFile("./tickets.csv")
 	if err != nil {
 		log.Fatal(err)
@@ -38,12 +38,15 @@ func PercentageDestination(destination string, total int) (float64, error) {
 
 		line := strings.Split(v, ",")
 
-		id, err := strconv.ParseInt(line[0], 10, 32)
+		idTrim := strings.Trim(line[0],"\r")
+		precioTrim := strings.Trim(line[5],"\r")
+
+		id, err := strconv.ParseInt(idTrim, 10, 32)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		precio, err2 := strconv.ParseInt(line[5], 10, 32)
+		precio, err2 := strconv.ParseInt(precioTrim, 10, 32)
 		if err2 != nil {
 			log.Fatal(err2)
 		}
@@ -58,18 +61,34 @@ func PercentageDestination(destination string, total int) (float64, error) {
 		tickets = append(tickets, t)
 
 	}
+	file.Close()
+	return tickets
+}
+
+// ejemplo 1
+// func GetTotalTickets(destination string) (int, error) {}
+
+// ejemplo 2
+// func GetMornings(time string) (int, error) {}
+
+// Requerimiento 3
+// Calcular el porcentaje de personas que viajan a un país determinado en un día.
+func PercentageDestination(destination string, total int, ch chan float64) (float64, error) {
+
+	ts := readData()
 
 	count := 0
 
-	for _, v := range tickets {
+	for _, v := range ts {
 		if v.PaisDestino == destination {
 			count++
-		} else {
-
-			// Arrojar error, cuando el destino no exista o este mal escrito.
 		}
+	}
+	if count == 0 {
+		return 0, errors.New("el destino ingresado es inválido")
 	}
 
 	porcentaje := (float64(count) / float64(total)) * 100
+	ch <- porcentaje
 	return porcentaje, nil
 }
