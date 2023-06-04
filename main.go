@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/AlejaMarin/Desafio-Go/internal/tickets"
 	"log"
+	"time"
+
+	"github.com/AlejaMarin/Desafio-Go/internal/tickets"
 )
 
 func main() {
@@ -30,11 +32,15 @@ func main() {
 	fmt.Println("En el destino ingresado viajan", <-ch1)
 
 	// Requerimiento 2:
-	cantidad, timeTravel, f := tickets.GetCountByPeriod("tard")
-	if f != nil {
-		log.Fatal(f)
-	}
-	fmt.Println("La cantidad de personas que viajan por la", timeTravel, "es de:", cantidad)
+	go func ()  {
+		cantidad, timeTravel, f := tickets.GetCountByPeriod("tarde")
+		if f != nil {
+			log.Fatal(f)
+		}
+		fmt.Println("La cantidad de personas que viajan por la", timeTravel, "es de:", cantidad)
+		
+	}()
+	time.Sleep(time.Second * 1)
 
 	// Requerimiento 3
 	ch3 := make(chan float64)
@@ -46,5 +52,4 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println("Porcentaje Personas:", total, "%")*/
-
 }

@@ -111,47 +111,14 @@ func GetTotalTickets(destination string, can chan int) (int, error) {
 mañana (7 → 12), tarde (13 → 19), y noche (20 → 23). */
 func GetCountByPeriod(flightTime string) (int, string, error) {
 
-	rawData, err := os.ReadFile("./tickets.csv")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	data := strings.Split(string(rawData), "\n")
-
-	var tickets []Ticket
-	for _, v := range data {
-		line := strings.Split(v, ",")
-
-		idTrim := strings.Trim(line[0], "\r")
-		precioTrim := strings.Trim(line[5], "\r")
-
-		id, err := strconv.ParseInt(idTrim, 10, 64)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		precio, err2 := strconv.ParseInt(precioTrim, 10, 64)
-		if err2 != nil {
-			log.Fatal(err2)
-		}
-
-		t := Ticket{
-			ID:          int(id),
-			Nombre:      string(line[1]),
-			Email:       string(line[2]),
-			PaisDestino: string(line[3]),
-			HoraVuelo:   string(line[4]),
-			Precio:      int(precio)}
-		tickets = append(tickets, t)
-
-	}
+	ts := readData()
 
 	countDawning := 0
 	countMorning := 0
 	countAfternoon := 0
 	countNight := 0
 
-	for _, w := range tickets {
+	for _, w := range ts {
 
 		t, err := time.Parse("15:04", w.HoraVuelo)
 		if err != nil {
