@@ -2,6 +2,7 @@ package tickets
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -38,8 +39,8 @@ func readData() []Ticket {
 
 		line := strings.Split(v, ",")
 
-		idTrim := strings.Trim(line[0],"\r")
-		precioTrim := strings.Trim(line[5],"\r")
+		idTrim := strings.Trim(line[0], "\r")
+		precioTrim := strings.Trim(line[5], "\r")
 
 		id, err := strconv.ParseInt(idTrim, 10, 32)
 		if err != nil {
@@ -66,7 +67,42 @@ func readData() []Ticket {
 }
 
 // ejemplo 1
-// func GetTotalTickets(destination string) (int, error) {}
+func GetTotalTickets(destination string, can chan int) (int, error) {
+
+	//Open CSV file
+	file, err := os.Open("tickets.csv")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	//Read CSV file
+	rowData, err := os.ReadFile("./tickets.csv")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	data := strings.Split(string(rowData), "\n")
+
+	total := 0
+
+	for _, value := range data {
+		line := strings.Split(value, ",")
+		pais := line[3]
+
+		if strings.EqualFold(pais, destination) {
+			total++
+		}
+	}
+
+	if total == 0 {
+		return 0, fmt.Errorf("pais no encontrado: %s", destination)
+	}
+
+	can <- total
+	return total, nil
+
+}
 
 // ejemplo 2
 // func GetMornings(time string) (int, error) {}
