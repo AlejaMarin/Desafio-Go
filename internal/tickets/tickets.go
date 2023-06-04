@@ -1,7 +1,6 @@
 package tickets
 
 import (
-	
 	"fmt"
 	"log"
 	"os"
@@ -10,7 +9,8 @@ import (
 
 // ejemplo 1
 
-func GetTotalTickets(destination string) (int, error) {
+func GetTotalTickets(destination string, can chan int) (int, error) {
+
 	//Open CSV file
 	file, err := os.Open("tickets.csv")
 	if err != nil {
@@ -23,15 +23,15 @@ func GetTotalTickets(destination string) (int, error) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	
+
 	data := strings.Split(string(rowData), "\n")
 
 	total := 0
-	
+
 	for _, value := range data {
 		line := strings.Split(value, ",")
 		pais := line[3]
-		
+
 		if strings.EqualFold(pais, destination) {
 			total++
 		}
@@ -41,8 +41,9 @@ func GetTotalTickets(destination string) (int, error) {
 		return 0, fmt.Errorf("pais no encontrado: %s", destination)
 	}
 
+	can <- total
 	return total, nil
-	
+
 }
 
 // ejemplo 2
